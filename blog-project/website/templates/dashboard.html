@@ -1,0 +1,308 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb" class="pb-4">
+    <ol class="breadcrumb fs-6">
+        <li class="breadcrumb-item lead"><a href="{{ url_for('views.home') }}">Home</a></li>
+        <li class="breadcrumb-item active lead" aria-current="page">Profile</li>
+    </ol>
+</nav>
+
+<div class="mb-3">
+    <a class="nav-link mx-2 btn btn-secondary fs-6" href="{{ url_for('views.create_post') }}"><i
+            class="fas fa-plus-circle pe-2 text-success"></i>Post</a>
+</div>
+
+<div class="container mb-5">
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card testimonial-card">
+                <div class="card-up" style="background-color: #9d789b;"></div>
+                <div class="avatar mx-auto bg-white">
+                    {% if img_view %}
+                    <img src="{{url_for('views.view_img',user_id=current_user.id)}}" class="rounded-circle"
+                        style="width: 150px; height: 150px; object-fit: cover" alt="Avatar" />
+                    {% else %}
+                    <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                        class="rounded-circle" style="width: 150px;" alt="Avatar" />
+                    {% endif %}
+                </div>
+                <div class="card-body text-center">
+                    <h4 class="mb-4">{{user.username}}</h4>
+                    <p>Email: {{user.email}}</p>
+                    <hr />
+
+                    <div class="dropdown text-center">
+                        <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+                            data-mdb-toggle="dropdown" aria-expanded="false">
+                            update profile
+                        </button>
+                        <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item list-group-item px-3 border-0 rounded-3 list-group-item-success"
+                                    href="#" data-mdb-toggle="modal" data-mdb-target="#pictureModal">Edit picture</a>
+                            </li>
+
+                            <li><a class="dropdown-item" href="#" data-mdb-toggle="modal"
+                                    data-mdb-target="#emailModal">Edit email</a></li>
+
+                            <li><a class="dropdown-item" href="#" data-mdb-toggle="modal"
+                                    data-mdb-target="#usernameModal">Edit username</a></li>
+
+                            <li><a class="dropdown-item" href="#" data-mdb-toggle="modal"
+                                    data-mdb-target="#passwordModal">Edit password</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- category -->
+
+            <div class="mt-4 text-center">
+                <div class="btn-group">
+                    <button class="btn btn-success btn-sm" type="button" onclick="categoryInput()" id="cat-btn">Add
+                        categories</button>
+
+                    {% if categories %}
+                    <button type="button" class="btn btn-sm btn-danger dropdown-toggle dropdown-toggle-split"
+                        data-mdb-toggle="dropdown" aria-expanded="false">
+                        Delete categories
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    {%endif%}
+                    <ul class="dropdown-menu">
+                        {% for cat in categories %}
+                        <li>
+                            <a class="dropdown-item position-relative" href="#">
+                                {{cat.category}}
+                                {% if current_user.is_authenticated %}
+                                {% if cat.cat_user == current_user.id %}
+                                <form method="post" action="{{ url_for('views.del_category',id=cat.id) }}"
+                                    class="position-absolute top-50 start-100 translate-middle">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa-regular fa-square-minus"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+
+                <!--Add  category  -->
+                <form name="category" method="POST" action="{{ url_for('views.add_category') }}" class="mt-2"
+                    id="category-form">
+                    <div class="mb-4 position-relative">
+                        <div class="form-outline">
+                            <input type="text" name="category" class="form-control" />
+                            <label class="form-label" for="form4Example2">category</label>
+                        </div>
+                        <button type="submit" value="button"
+                            class="btn btn-primary btn-sm  position-absolute top-50 start-50 translate-middle add-category-btn">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-9  text-center">
+
+            <h4 class="border border-secondary rounded-pill text-dark">Your recent posts</h4>
+
+            <!-- Displaying created post in home page -->
+            {% if posts %}
+            {%for post in posts%}
+            <div class="container mt-4 shadow-4 position-relative">
+                <div class="position-relative">
+                    <span class="small position-absolute top-0 start-0">
+                        <i class="fas fa-user-circle"></i>
+                        posted by <strong>you</strong>
+                        <i>{{post.timestamp|timesago}}</i></span>
+
+                    {% if post.category.category %}
+                    <span class="badge bg-dark position-absolute top-0 end-0 ">
+                        <i class="fa-solid fa-star star"></i>
+                        {{post.category.category}}</span>
+                    {% endif %}
+                </div>
+
+                <br>
+
+                <h2>{{post.title}}</h2>
+                <p>
+                    {{post.content | trim}}<a
+                        href="{{ url_for('views.view_post', id=post.id,slug=post.title) }}">more</a>
+                </p>
+                <br>
+
+
+                <span>
+                    <a class="btn btn-sm btn-primary position-absolute bottom-0 start-0"
+                        href="{{ url_for('views.view_post', id=post.id,slug=post.title) }}">
+                        view post
+                    </a>
+                </span>
+
+                {% if current_user.is_authenticated %}
+                {% if current_user.id == post.user_id%}
+                <a class="btn btn-danger btn-sm position-absolute bottom-0 end-0"
+                    href="{{ url_for('views.delete_post', id=post.id) }}">delete post</a>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <h4 class="text-center pt-2"><em>Sorry! there are no posts...</em></h4>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modals -->
+
+<!-- profile picture Modal -->
+
+<div class="modal fade" id="pictureModal" tabindex="-1" aria-labelledby="pictureModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pictureModalLabel">Upload image</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('views.picture')}}" class="mt-2" method="POST" enctype="multipart/form-data">
+                    <label class="form-label" for="customFile">click here to browse</label>
+                    <input type="file" name="image" class="form-control" id="customFile" />
+                    <input type="submit" class="btn btn-success mt-2" value="upload" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modal email -->
+
+<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" data-mdb-backdrop="static"
+    data-mdb-keyboard="false" aria-hidden="true" name="emailUpdates">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emailModalLabel">Update your email</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" name="emailUpdate" action="{{ url_for('auth.update_email') }}">
+                    <div class="mb-3">
+                        <label for="email1" class="col-form-label">Current email</label>
+                        <input type="email" class="form-control" id="email1" name="email" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password1" class="col-form-label">Password</label>
+                        <input type="password" class="form-control" id="password1" name="password"></input>
+                    </div>
+                    <div class="mb-3 pt-4">
+                        <label for="new-email" class="col-form-label">Enter new email</label>
+                        <input type="text" class="form-control" id="new-email" name="newEmail"></input>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="ValidateNewEmail()"
+                        id="emailUpdate_">update</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- username modal -->
+
+<div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" data-mdb-backdrop="static"
+    data-mdb-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emailModalLabel">Update username</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" name="nameUpdate" action="{{ url_for('auth.update_username') }}">
+                    <div class="mb-3">
+                        <label for="email2" class="col-form-label">Email</label>
+                        <input type="email" class="form-control" id="email2" name="userNameEmail" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password2" class="col-form-label">Password</label>
+                        <input type="password" class="form-control" id="password2" name="password_"></input>
+                    </div>
+                    <div class="mb-3 pt-4">
+                        <label for="newusernam" class="col-form-label">Enter new username</label>
+                        <input type="text" class="form-control" id="newusernam" name="newUser"></input>
+                    </div>
+                    <button type="button" onclick="ValidateNewname()" id="newUsername"
+                        class="btn btn-success ">update</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- password modal -->
+
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" data-mdb-backdrop="static"
+    data-mdb-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">Update password</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" name="passwordUpdation" action="{{ url_for('auth.update_password') }}">
+                    <div class="mb-3">
+                        <label for="email3" class="col-form-label">Email</label>
+                        <input type="email" class="form-control" id="email3" name="email" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password3" class="col-form-label">Password</label>
+                        <input type="password" class="form-control" id="password3" name="password"></input>
+                    </div>
+                    <div class="mb-3 pt-4">
+                        <label for="newPasswordId" class="col-form-label">Enter new password</label>
+                        <input type="password" class="form-control" id="newPasswordId" name="newPassword"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="repeat_password" class="col-form-label">confirm password</label>
+                        <input type="password" class="form-control" id="repeat_password" name="repeat_password"></input>
+                    </div>
+                    <button type="button" class="btn btn-success" id="newPassBtn"
+                        onclick="ValidateNewPass()">update</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

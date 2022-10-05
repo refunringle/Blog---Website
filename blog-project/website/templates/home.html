@@ -1,0 +1,161 @@
+{% extends "base.html" %}{% block title %}Home{% endblock %}
+
+{% block content%}
+
+
+<!-- Navbar -->
+
+<nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
+  <div class="container">
+    <a class="navbar-brand" href="{{ url_for('views.home') }}" title="blog logo"><img id="blog-logo"
+        src="https://www.freeiconspng.com/thumbs/blogger-logo-icon-png/blogger-logo-icon-png-28.png" alt="MDB Logo"
+        draggable="false" height="30" /></a>
+    <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Post icon -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto align-items-center">
+
+        <li class="nav-item">
+          <a class="nav-link mx-2 btn btn-secondary btn-rounded text-dark" href="{{ url_for('views.home') }}">
+            Home
+          </a>
+        </li>
+        <!-- Checking if user is logged in or not -->
+        {% if current_user.is_authenticated %}
+
+        <!-- User icon and dropdown -->
+        <li class="nav-item me-3 me-lg-0 dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-mdb-toggle="dropdown"
+            aria-expanded="false">
+            <i class="fas fa-user"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="{{ url_for('views.user_dashboard',username=current_user.username,
+              id = current_user.id ) }}">My profile</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+          </ul>
+          {% else %}
+        <li class="nav-item ms-3">
+          <a class="btn btn-black btn-rounded" href="{{ url_for('auth.login') }}">Sign in</a>
+        </li>
+
+        {% endif %}
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Category  icon -->
+<div class="btn-group">
+  <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-mdb-toggle="dropdown"
+    aria-expanded="false">
+    Categories
+  </button>
+  <ul class="dropdown-menu">
+    {% for cat in category %}
+    <li>
+      <a class="dropdown-item position-relative"
+        href="{{ url_for('views.category_post', id=cat.id, category=cat.category)}}">
+        {{cat.category}}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+
+<!-- Displaying created post in home page -->
+<h1 class="text-center pt-2">
+  <mark class="rounded-pill shadow-4 border border-secondary">Recent posts</mark>
+</h1>
+{% if posts %}
+{%for post in posts%}
+<div class="container mt-4 shadow-4 position-relative">
+  <div class="position-relative">
+    <span class="small position-absolute top-0 start-0">
+      <i class="fas fa-user-circle"></i>
+      posted by <strong>{{post.user.username}}</strong>
+      <i>{{post.timestamp|timesago}}</i></span>
+
+    {% if post.category.category %}
+    <span class="badge bg-dark position-absolute top-0 end-0 ">
+      <i class="fa-solid fa-star star"></i>
+      {{post.category.category}}</span>
+    {% endif %}
+  </div>
+
+  <br>
+
+  <h2>{{post.title}}</h2>
+  <p>
+    {{post.content | trim}}<a href="{{ url_for('views.view_post', id=post.id,slug=post.title) }}">more</a>
+  </p>
+  <br>
+
+
+  <span>
+    <a class="btn btn-sm btn-primary" href="{{ url_for('views.view_post', id=post.id,slug=post.title) }}">
+      view post
+    </a>
+  </span>
+
+  <hr class="text-primary" />
+
+
+  <!-- Like view -->
+
+  {% if current_user.is_authenticated %}
+  <div title="comments" class="p-2 position-relative">
+    <span id="likes-count-{{post.id}}">
+      {{ post.likes|length }}</span>
+    {% if current_user.id in post.likes|map(attribute="user_id")|list %}
+    <i class="fa-solid fa-hands-clapping fa-lg text-primary" id="like-button-{{post.id}}"
+      onclick="like({{post.id}})"></i>
+    {% else %}
+    <i class="fa-solid fa-hands-clapping fa-lg" id="like-button-{{post.id}}" onclick="like({{post.id}})"></i>
+    {% endif %}
+  </div>
+
+  <div class="position-absolute bottom-0 start-50 translate-middle-x">
+    <!--no of comments-->
+    <a href="{{ url_for('views.view_post', id=post.id,slug=post.title) }}">
+      <i class="fa-regular fa-comment"></i> {{ post.comments | length }}
+    </a>
+  </div>
+  {%else%}
+  <div class="position-absolute bottom-0 start-50 translate-middle-x">
+    <!--no of comments-->
+    <a href="{{ url_for('views.view_post', id=post.id,slug=post.title) }}">
+      <i class="fa-regular fa-comment"></i> {{ post.comments | length }}
+    </a>
+  </div>
+  {% endif %}
+
+
+
+
+
+</div>
+{% endfor %}
+{%else%}
+<h4 class="text-center pt-5"><em>Currently there are no posts available...</em></h4>
+{% endif %}
+
+
+
+<!-- Copyright -->
+{% if posts %}
+<footer class="bg-light text-center text-lg-start mt-5 border rounded-top">
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2022 Copyright:
+    <a class="text-dark" href="{{ url_for('views.home') }}">thinkpad.blog</a>
+  </div>
+  {% endif %}
+</footer {% endblock %}

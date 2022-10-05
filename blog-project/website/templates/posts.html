@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% block title %}Create post{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb" class="pb-4">
+  <ol class="breadcrumb fs-6">
+    <li class="breadcrumb-item lead"><a
+        href="{{ url_for('views.user_dashboard', id=current_user.id, username=current_user.username) }}">Profile</a>
+    </li>
+    <li class="breadcrumb-item active lead" aria-current="page">Create post</li>
+  </ol>
+</nav>
+
+<div class="container">
+
+  <h1 class="text-center pt-2"><span class="badge bg-primary">Create Post</span></h1>
+
+
+  <!-- Post creation form -->
+
+  <form method="post" name="form" class="pt-4">
+    <!-- Title input -->
+    <div class="form-outline mb-4">
+      <input type="text" name="title" id="form4Example2" class="form-control" />
+      <label class="form-label" for="form4Example2">Title</label>
+    </div>
+
+    <!-- category input -->
+
+    <div class="mb-4 =">
+      <div class="select-div">
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="Category">
+          <option selected disabled>Select category</option>
+          {% for category in categories%}
+          <option value="{{category.category}}">{{category.category}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+
+    <!-- Content input -->
+    <div class="form-outline mb-4">
+      <textarea class="form-control" name="content" id="form4Example3" rows="4"></textarea>
+      <label class="form-label" for="form4Example3">Share your thoughts</label>
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-primary b mb-4">publish</button>
+  </form>
+
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% block title %}Registration{% endblock %}
+
+{% block content%}
+
+<section class="vh-100">
+  <div class="container-fluid h-custom">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+
+      <h1 class="text-center pt-2">
+        <mark class="rounded-pill shadow-4 border border-primary bg-light">Register</mark>
+      </h1>
+
+      <div class="col-md-9 col-lg-6 col-xl-5">
+        <img
+          src="https://media.istockphoto.com/vectors/register-account-submit-access-login-password-username-internet-vector-id1281150061?k=20&m=1281150061&s=612x612&w=0&h=wpCvmggedXRECWK-FVL98MMllubyevIrXuUu50fdCqE="
+          class="img-fluid" alt="Sample image">
+      </div>
+      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+
+        <form method="POST" name='registration'>
+
+          <!-- Email input -->
+          <div class="form-outline mb-4">
+            <input type="text" id="email" class="form-control form-control-lg" name="email"
+              placeholder="gary@vaynermedia.com" autocomplete="off" />
+            <label class="form-label" for="email">Enter your email</label>
+          </div>
+          <!-- username input -->
+          <div class="form-outline mb-3">
+            <input type="text" id="username" class="form-control form-control-lg" name="username"
+              placeholder="Gary Vaynerchuk" autocomplete="off" />
+            <label class="form-label" for="username">Enter your username</label>
+          </div>
+
+          <!-- Password input -->
+
+          <label id="passwordLable" class="passlabel small" style="display: none;">Type at least 7 and no more than 12
+            characters</label>
+          <div class="form-outline mb-3">
+            <input type="password" id="password" class="form-control form-control-lg" name="password"
+              onfocus="labelVisible()" onblur="labelInvisible()" />
+            <label class="form-label" for="password">Enter your password</label>
+          </div>
+
+          <div class="form-outline mb-3">
+            <input type="password" id="repeat_password" class="form-control form-control-lg" name="repeat_password" />
+            <label class="form-label" for="repeat_password">Confirm password</label>
+          </div>
+          <div class="text-center text-lg-start mt-4 pt-2">
+            <button type="button" id="register-btn" class="btn btn-primary btn-lg"
+              style="padding-left: 2.5rem; padding-right: 2.5rem;" onclick="formValidation()">sign up</button>
+          </div>
+
+        </form>
+
+
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

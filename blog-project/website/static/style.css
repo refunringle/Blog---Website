@@ -1,0 +1,117 @@
+
+   /* content shrink into nav bar */
+
+   body{
+    padding-top: 70px;
+    
+  }
+/* ------------------------- */
+
+
+
+/* base.html alert message   */
+
+#top-alert {
+    text-align: center;
+    font-size: large;
+    border-radius: 10px;
+    position: fixed;
+    top: 0;
+    z-index: 99999;
+  }
+/* ---------------------- */
+
+
+
+
+  /* password secondary label*/
+
+  
+  .passlabel{
+    color: #2841ca;
+   
+  }
+
+/* ----------------- */
+
+/* category icon */
+
+  .star{
+    color:gold;
+  }
+
+/* ----------------- */
+
+
+
+
+
+
+
+/* User dropdown on hover display */
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+  }
+
+.dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+
+
+/* --------------------------- */
+
+
+/* flask flash meessage fade out */
+
+
+  .message-fade{
+    animation:message-fade 0.5s 1;
+   -webkit-animation:message-fade 0.5s 1;
+   animation-fill-mode: forwards;
+
+   animation-delay:3s;
+   -webkit-animation-delay:2s; 
+   -webkit-animation-fill-mode: forwards;
+
+} 
+
+@keyframes message-fade{
+   from {opacity :1;}
+   to {opacity :0;}
+}
+
+@-webkit-keyframes message-fade{
+   from {opacity :1;}
+   to {opacity :0;}
+}
+
+
+/* ------------------------------- */
+
+
+/* add category button alignment */
+
+.add-category-btn, .start-50 {
+  left: 92% !important;
+}
+
+/* --------------------------- */
+
+
+/* category input field */
+
+#category-form{
+  display: none;
+}
+
+/* ------------- */
+
+
